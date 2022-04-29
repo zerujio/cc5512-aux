@@ -11,7 +11,31 @@
 #include <fstream>
 #include <stdexcept>
 #include <sstream>
+#include <string>
 #include <chrono>
+
+// RAII: Resource Acquisition Is Initialization
+class  WindowManager {
+public:
+    WindowManager(int width, int height, std::string name) 
+    : m_window_ptr(glfwCreateWindow(width, height, name.c_str(), nullptr, nullptr))
+    {
+        if (!m_window_ptr)
+            throw std::runtime_error("window creation failed");
+    }
+
+    ~WindowManager() {
+        if (m_window_ptr)
+            glfwDestroyWindow(m_window_ptr);
+    }
+
+    GLFWwindow* ptr() const {
+        return m_window_ptr;
+    }
+
+private:
+    GLFWwindow* m_window_ptr;
+};
 
 struct PosColorVertex {
     float x;
@@ -59,11 +83,13 @@ int main() {
     // glfw window creation
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    GLFWwindow* window = glfwCreateWindow(window_width, window_height, "Hello bgfx!", nullptr, nullptr);
-    if (!window) {
-        std::cerr << "Window creation failed!" << "\n";
-        return 2;
-    }
+    { // window scope start
+    WindowManager window {window_width, window_height, "Hello bgfx!"};
+    //GLFWwindow* window = glfwCreateWindow(window_width, window_height, "Hello bgfx!", nullptr, nullptr);
+    //if (!window) {
+    //    std::cerr << "Window creation failed!" << "\n";
+    //    return 2;
+    //}
 
     // bgfx init
     bgfx::renderFrame();    // previene la creacion de un rendering thread
@@ -79,7 +105,7 @@ int main() {
         return 3;
     }
 
-    pdata.nwh = (void*) (uintptr_t) glfwGetX11Window(window);
+    pdata.nwh = (void*) (uintptr_t) glfwGetX11Window(window.ptr());
     if (!bgfx_init_args.platformData.nwh) {
         std::cerr << "could not retrieve window handle from GLFW.\n";
         return 4;
@@ -88,7 +114,7 @@ int main() {
     // resolucion de renderizado
     auto& resolution = bgfx_init_args.resolution;
     resolution.width = window_width;
-    resolution.height = window_width;
+    resolution.height = window_height;
     resolution.reset = BGFX_RESET_VSYNC;
 
     // inicializacion del renderer
@@ -166,7 +192,7 @@ int main() {
     using sec = std::chrono::duration<float>;
     sec delta {0.0f};
 
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window.ptr())) {
 
         tf = std::chrono::steady_clock::now();
         delta = tf - ti;
@@ -200,7 +226,7 @@ int main() {
     bgfx::shutdown();
 
     // cerrar ventana y glfw
-    glfwDestroyWindow(window);
+    } // window scope end
     glfwTerminate();
 
     return 0; 
