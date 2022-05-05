@@ -1,31 +1,21 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <iostream>
+#include <stdexcept>
 
 using json = nlohmann::json;
 
 struct Vector3 {
-  float x;
-  float y;
-  float z;
+  float x {0.0f};
+  float y {0.0f};
+  float z {0.0f};
 };
 
-struct VisualData {
-  int vao;
-  int shader_program;
+struct Transform {
+  Vector3 position  {0.0f, 0.0f, 0.0f};
+  Vector3 rotation  {0.0f, 0.0f, 0.0f};
+  Vector3 scale     {1.0f, 1.0f, 1.0f};
 };
-
-struct TransformData {
-  Vector3 position;
-  Vector3 rotation;
-  Vector3 scale;
-};
-
-struct GameObject {
-  TransformData transform;
-  VisualData visual;
-};
-
-// NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vector3, x, y, z)
 
 void to_json(json& j, const Vector3& v) {
   j = {v.x, v.y, v.z};
@@ -37,31 +27,58 @@ void from_json(const json& j, Vector3& v) {
   v.z = j.at(2);
 }
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(VisualData, vao, shader_program)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Transform, position, rotation, scale)
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TransformData, position, rotation, scale)
+std::ostream& operator<< (std::ostream& os, const Vector3& v) {
+  return os << "{" << v.x << ", " << v.y << ", " << v.z << "}";
+}
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GameObject, transform, visual)
+int main(int argc, char** argv) {
 
-int main() {
+  if (argc < 2) {
+    std::cout << "usage: serialization <file>" << std::endl;
+    return -1;
+  }
 
-  GameObject game_object {
-    { // transform
-      {0.0, 1.0, 2.0},
-      {45.0, .0, .0},
-      {1.0, 1.0, 1.0}
-    },
-    { // visual
-      3,
-      42
-    }
-  };
+  Transform tr;
 
-  std::ofstream output_file {"data.json"};
+  try {
+    std::ifstream file {argv[1]};
+    json j;
+    file >> j;
+    tr = j;
+  } catch (std::exception &e) {
+    std::cerr << "A parsing error occurred: " << e.what() << std::endl;
+  }
 
-  json serialized_game_object {game_object};
+  std::cout << "position  = " << tr.position << std::endl
+            << "rotation  = " << tr.rotation << std::endl
+            << "scale     = " << tr.scale << std::endl;
 
-  output_file << serialized_game_object.dump(2) << std::endl;
+  std::cout << "¿modificar posición? [y/n]" << std::endl;
+
+  char answer;
+  std::cin >> answer;
+
+  auto yes = [](char c) { return c == 'y' or c == 'Y'; };
+
+  if (yes(answer)) {
+    std::cout << "x=";
+    std::cin >> tr.position.x;
+
+    std::cout << "y=";
+    std::cin >> tr.position.y;
+
+    std::cout << "z=";
+    std::cin >> tr.position.z;
+  }
+
+  {
+    std::ofstream file {argv[1], std::ios::out | std::ios::trunc};
+    json j = tr;
+    file.seekp(0);
+    file << j.dump(2) << std::endl;
+  }
 
   return 0;
 }
