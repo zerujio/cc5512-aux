@@ -1,0 +1,25 @@
+[
+  {
+    "transform": {
+      "position": [
+        0.0,
+        1.0,
+        2.0
+      ],
+      "rotation": [
+        45.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "visual": {
+      "shader_program": 42,
+      "vao": 3
+    }
+  }
+]
