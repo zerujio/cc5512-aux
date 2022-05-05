@@ -17,17 +17,28 @@ struct Transform {
   Vector3 scale     {1.0f, 1.0f, 1.0f};
 };
 
+// json j = Vector3();
 void to_json(json& j, const Vector3& v) {
   j = {v.x, v.y, v.z};
 }
 
+// Vector3 v = j;
 void from_json(const json& j, Vector3& v) {
   v.x = j.at(0);
   v.y = j.at(1);
   v.z = j.at(2);
 }
 
+//NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vector3, x, y, z)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Transform, position, rotation, scale)
+
+/*
+{
+"position" : ...,
+"rotation" : ...,
+"scale"    : ...
+}
+*/
 
 std::ostream& operator<< (std::ostream& os, const Vector3& v) {
   return os << "{" << v.x << ", " << v.y << ", " << v.z << "}";

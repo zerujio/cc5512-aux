@@ -12,5 +12,6 @@ int main() {
   object["an_array"] = {1, 4, 6};
 
   // serialization
+  //std::cout << object << std::endl;
   std::cout << object.dump(2) << std::endl;
 }
