@@ -44,5 +44,5 @@ add_executable(hello_bgfx src/hello_bgfx.cpp)
 target_link_libraries(hello_bgfx PUBLIC bx bgfx glfw) # bx se incluye porque sus headers son una dependencia de bgfx/platform.h
 add_dependencies(hello_bgfx v_simple_shader f_simple_shader)
 
-add_custom_target(Aux1)
-add_dependencies(Aux1 hello_bgfx)
+add_custom_target(aux1)
+add_dependencies(aux1 hello_bgfx)
