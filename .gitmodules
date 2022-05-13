@@ -1,9 +1,15 @@
-[submodule "aux1/ext/glfw"]
-	path = aux1/ext/glfw
+[submodule "libs/glfw"]
+	path = libs/glfw
 	url = git@github.com:glfw/glfw.git
-[submodule "aux1/ext/bgfx.cmake"]
-	path = aux1/ext/bgfx.cmake
-	url = https://github.com/bkaradzic/bgfx.cmake.git
+[submodule "aux1/libs/bgfx.cmake"]
+	path = aux1/libs/bgfx.cmake
+	url = git@github.com:bkaradzic/bgfx.cmake.git
 [submodule "aux3/libs/json"]
 	path = aux3/libs/json
 	url = git@github.com:nlohmann/json.git
+[submodule "libs/glm"]
+	path = libs/glm
+	url = git@github.com:g-truc/glm.git
+[submodule "libs/entt"]
+	path = libs/entt
+	url = git@github.com:skypjack/entt.git

@@ -6,26 +6,15 @@ set(BGFX_INSTALL_EXAMPLES OFF CACHE BOOL "")
 set(BGFX_AMALGAMATED ON CACHE BOOL "")
 set(BX_AMALGAMATED ON CACHE BOOL "")
 
-add_subdirectory(ext/bgfx.cmake)
-
-# GLFW
-
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-
-add_subdirectory(ext/glfw)
-
-# Aux 1
+add_subdirectory(libs/bgfx.cmake)
 
 # preprocesamiento de shaders
 function(add_bgfx_shader target_name source output type varyingdef_filepath)
 
     set(OUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${output})
     set(SRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${source})
-    set(BGFX_BINARY_DIR ${CMAKE_BINARY_DIR}/aux1/ext/bgfx.cmake)
-    set(BGFX_SOURCE_DIR ${CMAKE_SOURCE_DIR}/aux1/ext/bgfx.cmake/bgfx)
+    set(BGFX_BINARY_DIR ${CMAKE_BINARY_DIR}/aux1/libs/bgfx.cmake)
+    set(BGFX_SOURCE_DIR ${CMAKE_SOURCE_DIR}/aux1/libs/bgfx.cmake/bgfx)
 
     add_custom_command(
         OUTPUT ${OUT_FILE}

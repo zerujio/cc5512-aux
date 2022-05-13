@@ -13,4 +13,4 @@ add_executable(game_object game_object.cpp)
 target_link_libraries(game_object PRIVATE nlohmann_json::nlohmann_json)
 
 add_custom_target(aux3)
-add_dependencies(aux3 hello_json json_set)
+add_dependencies(aux3 hello_json json_set serialization game_object)
