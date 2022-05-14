@@ -6,11 +6,25 @@
 #include <entt/entt.hpp>
 
 #include <memory>
+#include <forward_list>
+#include <string>
+
+struct SceneGraphNode {
+    SceneGraphNode() = default;
+    SceneGraphNode(entt::entity e) : entity(e) {}
+
+    entt::entity entity {entt::null};
+    std::forward_list<SceneGraphNode> children;
+    std::string name;
+
+    SceneGraphNode& findChild(std::string name);
+};
 
 // Escena
 struct Scene {
     entt::registry registry;
     entt::entity player {registry.create()};
+    SceneGraphNode root;
 };
 
 std::unique_ptr<Scene> scene;
@@ -75,17 +89,39 @@ void init() {
     glm::vec3 camera_target {0.0f};
     view_matrix = glm::lookAt(camera_position, camera_target, {0.0f, 1.0f, 0.0f});
 
+    scene->root.entity = scene->player;
+    scene->registry.emplace<CTransform>(scene->player);
+    scene->registry.emplace<CVisual>(scene->player, glm::vec4(.25, .5, 1., 1.), mesh, program);
+
     auto obj1 = scene->registry.create();
+    scene->root.children.emplace_front(obj1);
     scene->registry.emplace<CTransform>(obj1, glm::vec3(0., 0., 3.));
     scene->registry.emplace<CVisual>(obj1, glm::vec4(1., .5, 0., 1.), mesh, program);
 
     auto obj2 = scene->registry.create();
+    scene->root.children.front().children.emplace_front(obj2);
     scene->registry.emplace<CTransform>(obj2, glm::vec3(3., 0., 0.));
     scene->registry.emplace<CVisual>(obj2, glm::vec4(1., 0., 0., 1.), mesh, program);
 
-    scene->player = scene->registry.create();
-    scene->registry.emplace<CTransform>(scene->player);
-    scene->registry.emplace<CVisual>(scene->player, glm::vec4(.25, .5, 1., 1.), mesh, program);
+    // root
+    // |
+    // obj1
+    // |
+    // obj2
+}
+
+void updateTransforms(entt::registry& registry, SceneGraphNode& node, glm::mat4 parent_transform = glm::mat4(1.0f)) {
+
+    auto c_transform = registry.try_get<CTransform>(node.entity);
+    glm::mat4 new_transform = c_transform ? glm::translate(parent_transform, c_transform->position) : parent_transform;
+
+    if (c_transform) {
+        c_transform->matrix = new_transform;
+    }
+
+    for (auto& child : node.children) {
+        updateTransforms(registry, child, new_transform);
+    }
 }
 
 // En cada cuadro
@@ -97,14 +133,18 @@ void update(double delta) {
     alpha += ang_spd * delta;
     auto& tr = scene->registry.get<CTransform>(scene->player).position = {0., std::sin(alpha), 0.};
 
+    // update transforms
+    updateTransforms(scene->registry, scene->root);
+
+    // for each (CTransform, CVisual) in scene->registry
     scene->registry.view<CTransform, CVisual>().each(
             [](const CTransform& tr, const CVisual& vs) {
-                auto tr_matrix = glm::translate(glm::mat4 (1.0f), tr.position);
+                //auto tr_matrix = glm::translate(glm::mat4 (1.0f), tr.position);
 
                 glUseProgram(vs.program->program);
                 glUniformMatrix4fv(u_view_idx, 1, GL_FALSE, glm::value_ptr(view_matrix));
                 glUniformMatrix4fv(u_proj_idx, 1, GL_FALSE, glm::value_ptr(proj_matrix));
-                glUniformMatrix4fv(u_model_idx, 1, GL_FALSE, glm::value_ptr(tr_matrix));
+                glUniformMatrix4fv(u_model_idx, 1, GL_FALSE, glm::value_ptr(tr.matrix));
                 glUniform4fv(u_color_idx, 1, glm::value_ptr(vs.color));
 
                 glBindVertexArray(vs.mesh->vao);
