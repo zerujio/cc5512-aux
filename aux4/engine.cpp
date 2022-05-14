@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "engine.hpp"
+#include "cube.hpp"
 
 void onGLFWError(int error_code, const char* description) {
     std::cout << "[GLFW ERROR] " << error_code << " : " << description << std::endl;
@@ -131,6 +132,33 @@ GLuint makeProgram(const std::string & vertex, const std::string & fragment) {
 
 glm::ivec2 windowResolution() {
     return {800, 600};
+}
+
+MeshData createCubeMesh() {
+    GLuint vao, vbo, ebo;
+
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glGenBuffers(1, &ebo);
+
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Cube::vertices), Cube::vertices, GL_STATIC_READ);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Cube::Vertex), nullptr);     // in vec3 a_position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Cube::Vertex),               // in vec3 a_normal
+                          reinterpret_cast<void*>(offsetof(Cube::Vertex, normal)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Cube::indices), Cube::indices, GL_STATIC_READ);
+
+    const GLsizei vertex_count = sizeof(Cube::vertices) / sizeof(Cube::Vertex);
+    const GLsizei index_count = sizeof(Cube::indices) / sizeof(unsigned int);
+
+    return {vao, vbo, ebo, vertex_count, index_count};
 }
 
 int main() {
