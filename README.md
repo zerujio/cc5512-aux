@@ -20,3 +20,11 @@ Una librería para leer y crear archivos JSON. Ejemplos de serialización de est
 Una implementación simple de un grafo de escena + uso de smart pointers.
 
 [Video](https://youtu.be/tH2pbsK6paE)
+
+
+## Auxiliar 5: Audio 3D
+Audio espacializado utilizando OpenAL.
+
+ [Video](https://youtu.be/fEg1xojRNpw)
+ [Presentación](https://docs.google.com/presentation/d/1qZQs9QwDlnFoaFVtHPE1sI38be97jNWtzMsCmSzSL74/edit?usp=sharing)
+ 
