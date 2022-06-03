@@ -1,3 +1,9 @@
+/*
+ * Este es el ejemplo escrito durante la auxiliar.
+ * Probablemente no compila; y si compila, no hace nada.
+ */
+
+
 #define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
 
