@@ -13,3 +13,9 @@
 [submodule "aux1/libs/bgfx.cmake"]
 	path = aux1/libs/bgfx.cmake
 	url = git@github.com:bkaradzic/bgfx.cmake.git
+[submodule "libs/openal-soft"]
+	path = libs/openal-soft
+	url = git@github.com:kcat/openal-soft.git
+[submodule "libs/dr_libs"]
+	path = libs/dr_libs
+	url = git@github.com:mackron/dr_libs.git
