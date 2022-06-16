@@ -27,4 +27,6 @@ Audio espacializado utilizando OpenAL.
 
  [Video](https://youtu.be/fEg1xojRNpw)
  [Presentación](https://docs.google.com/presentation/d/1qZQs9QwDlnFoaFVtHPE1sI38be97jNWtzMsCmSzSL74/edit?usp=sharing)
- 
+
+## Auxiliar 6: Behavior Trees
+Implementación simple de behavior trees.

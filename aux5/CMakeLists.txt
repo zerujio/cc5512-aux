@@ -7,5 +7,4 @@ target_link_libraries(spatial_audio glfw glad glm EnTT::EnTT OpenAL dr_libs)
 add_custom_target(aux5)
 add_dependencies(aux5 spatial_audio)
 
-file(COPY frag.glsl vert.glsl loop.wav
-    DESTINATION .)
+#file(COPY frag.glsl vert.glsl loop.wav DESTINATION .)
