@@ -93,7 +93,7 @@ struct CTransform {
 };
 
 // definidas por el usuario
-void init(GLFWwindow* window, Scene& scene);
+void init(Scene& scene);
 void update(Scene &scene, double delta);
 
 #endif //AUX4__ENGINE_HPP
